@@ -30,7 +30,7 @@ func (*User) Login(user ApiModel.User) (back map[string]map[string]interface{}, 
             back["user"]["id"] = Muser.Id
             back["user"]["uname"] = Muser.Nickname
             back["user"]["ctime"] = Muser.TimeCreate
-            back["auth"]["etime"] = Time + 3600
+            back["auth"]["etime"] = Time + 7200
             back["auth"]["token"] = base64.StdEncoding.EncodeToString([]byte(strconv.FormatUint(a, 10) + "|" + strconv.FormatUint(b, 10)))
         }
     }
