@@ -4,8 +4,8 @@ import (
     "time"
     "golang.org/x/crypto/bcrypt"
     "github.com/gin-gonic/gin"
-    ApiModel "life-b/app/api/model"
-    ApiLogic "life-b/app/api/logic"
+    ApiModel "life/app/api/model"
+    ApiLogic "life/app/api/logic"
 )
 
 type User struct {}
@@ -16,20 +16,20 @@ func (*User) Login(c *gin.Context) {
 
     if err := c.ShouldBindJSON(&Muser); err != nil {
         var data = err.Error()
-        c.JSON(CODE_HTTP_FALIURE, gin.H{ "code": CODE_LOGIN_FALIURE_B, "text": TEXT_LOGIN_FALIURE_B, "data": data })
+        c.JSON(CODE_HTTP_FALIURE, gin.H{ "code": CODE_LOGIN_FALIURE_B, "note": TEXT_LOGIN_FALIURE_B, "data": data })
     } else {
         if data, err := Luser.Login(Muser); err == nil {
-            c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_LOGIN_SUCCESS_A, "text": TEXT_LOGIN_SUCCESS_A, "data": data })
+            c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_LOGIN_SUCCESS_A, "note": TEXT_LOGIN_SUCCESS_A, "data": data })
         } else {
             var data = err.Error()
-            c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_LOGIN_FALIURE_A, "text": TEXT_LOGIN_FALIURE_A, "data": data })
+            c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_LOGIN_FALIURE_A, "note": TEXT_LOGIN_FALIURE_A, "data": data })
         }
     }
 }
 
 func (*User) Status(c *gin.Context) {
 
-    c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_SUCCESS_A, "text": TEXT_SUCCESS_A, "data": ApiModel.Musers })
+    c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_SUCCESS_A, "note": TEXT_SUCCESS_A, "data": ApiModel.Musers })
 }
 
 func (*User) Detail(c *gin.Context) {
@@ -49,7 +49,7 @@ func (*User) Create(c *gin.Context) {
 
     if err := c.ShouldBindJSON(&Muser); err != nil {
         var data = err.Error()
-        c.JSON(CODE_HTTP_FALIURE, gin.H{ "code": CODE_CREATE_FALIURE_B, "text": TEXT_CREATE_FALIURE_B, "data": data })
+        c.JSON(CODE_HTTP_FALIURE, gin.H{ "code": CODE_CREATE_FALIURE_B, "note": TEXT_CREATE_FALIURE_B, "data": data })
     } else {
         base(c)
 
@@ -60,9 +60,9 @@ func (*User) Create(c *gin.Context) {
         Muser.TimeCreate = uint64(time.Now().Unix())
 
         if data := Muser.Create(Muser); data > 0 {
-            c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_CREATE_SUCCESS_A, "text": TEXT_CREATE_SUCCESS_A, "data": data })
+            c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_CREATE_SUCCESS_A, "note": TEXT_CREATE_SUCCESS_A, "data": data })
         } else {
-            c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_CREATE_FALIURE_A, "text": TEXT_CREATE_FALIURE_A, "data": data })
+            c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_CREATE_FALIURE_A, "note": TEXT_CREATE_FALIURE_A, "data": data })
         }
     }
 }

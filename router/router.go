@@ -8,7 +8,7 @@ import (
     "net/http"
     "encoding/base64"
     "github.com/gin-gonic/gin"
-    ApiController "life-b/app/api/controller"
+    ApiController "life/app/api/controller"
 )
 
 func Route(r *gin.Engine) (*gin.Engine) {
@@ -45,6 +45,7 @@ func Route(r *gin.Engine) (*gin.Engine) {
 
             groupApiConf.GET("/list", controller.List)
             groupApiConf.GET("/tree", controller.Tree)
+            groupApiConf.GET("/search", controller.List)
             groupApiConf.POST("/create", controller.Create)
             groupApiConf.POST("/detail", controller.Detail)
             groupApiConf.POST("/modify", controller.Modify)
@@ -56,6 +57,7 @@ func Route(r *gin.Engine) (*gin.Engine) {
             controller := &ApiController.Bill{}
 
             groupApiBill.GET("/list", controller.List)
+            groupApiBill.GET("/search", controller.List)
             groupApiBill.POST("/create", controller.Create)
             groupApiBill.POST("/detail", controller.Detail)
             groupApiBill.POST("/modify", controller.Modify)
@@ -67,6 +69,7 @@ func Route(r *gin.Engine) (*gin.Engine) {
             controller := &ApiController.Note{}
 
             groupApiNote.GET("/list", controller.List)
+            groupApiNote.GET("/search", controller.List)
             groupApiNote.POST("/create", controller.Create)
             groupApiNote.POST("/detail", controller.Detail)
             groupApiNote.POST("/modify", controller.Modify)

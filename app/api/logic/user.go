@@ -6,7 +6,7 @@ import (
     "strconv"
     "encoding/base64"
     "golang.org/x/crypto/bcrypt"
-    ApiModel "life-b/app/api/model"
+    ApiModel "life/app/api/model"
 )
 
 type User struct {}

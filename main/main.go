@@ -6,7 +6,7 @@ import (
     "fmt"
     "net/http"
     _ "net/http/pprof"
-    "life-b/router"
+    "life/router"
     "github.com/gin-gonic/gin"
 )
 
@@ -16,7 +16,7 @@ func main() {
     obj := gin.Default()
     if len(os.Args) >= 2 {
         (router.Route(obj)).Run(os.Args[1])
-        fmt.Println("The HTTP service start at hodt port %s", os.Args[1])
+        fmt.Println("The HTTP service start at host port %s", os.Args[1])
     } else {
         (router.Route(obj)).Run("0.0.0.0:3000")
         fmt.Println("The HTTP service start at default host port 0.0.0.0:3000")
