@@ -2,12 +2,8 @@ package router
 
 import (
     "os"
-    "time"
-    "strings"
-    "strconv"
-    "net/http"
-    "encoding/base64"
     "github.com/gin-gonic/gin"
+    middle "life/plugin/middle"
     ApiController "life/app/api/controller"
 )
 
@@ -15,8 +11,9 @@ func Route(r *gin.Engine) (*gin.Engine) {
     base := os.Getenv("LIFE_FILE_UPLOAD_PATH")
     r.Static("/static", base + "/static")
 
-    r.Use(CheckLogin())
-    r.Use(CheckCrossDomain())
+    r.Use(middle.Logger())
+    r.Use(middle.CheckToken())
+    r.Use(middle.CheckCrossDomain())
 
     groupApi := r.Group("/api")
     {
@@ -78,49 +75,4 @@ func Route(r *gin.Engine) (*gin.Engine) {
     }
 
     return r
-}
-
-func CheckLogin() (gin.HandlerFunc) {
-    return func(c *gin.Context) {
-        if c.Request.Method != "OPTIONS" &&
-            c.Request.URL.Path != "/api/user/login" {
-            token := c.Request.Header.Get("X-AUTH-TOKEN")
-            chars, err := base64.StdEncoding.DecodeString(token)
-            if err != nil || len(chars) == 0 {
-                defer c.Abort()
-                c.JSON(http.StatusOK, gin.H{ "code": "0", "text": "没有登录" })
-            } else {
-                if strs := strings.Split(string(chars), "|"); len(strs) != 2 {
-                    defer c.Abort()
-                    c.JSON(http.StatusOK, gin.H{ "code": "0", "text": "无效登陆" })
-                } else {
-                    ntime := uint64(time.Now().Unix())
-                    etime, err := strconv.ParseUint(strs[1], 10, 64)
-                    if err == nil && etime > ntime {
-                        c.Request.Header.Set("X-AUTH-USERID", strs[0])
-                    } else {
-                        defer c.Abort()
-                        c.JSON(http.StatusOK, gin.H{ "code": "0", "text": "登录超时" })
-                    }
-                }
-            }
-        }
-    }
-}
-
-func CheckCrossDomain() (gin.HandlerFunc) {
-    return func(c *gin.Context) {
-        if c.Request.Method == "OPTIONS" {
-            defer c.JSON(http.StatusOK, gin.H{ "code": "0" })
-            defer c.Abort()
-        } else {
-            defer c.Next()
-        }
-
-        w := c.Writer
-        w.Header().Set("Access-Control-Allow-Origin", "*") 
-        w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-        w.Header().Add("Access-Control-Allow-Headers", "X-AUTH-TOKEN")
-        w.Header().Set("Access-Control-Allow-Methods", "OPTIONS, HEAD, GET, PUT, POST, PATCH, DELETE")
-    }
 }
