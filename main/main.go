@@ -15,8 +15,8 @@ var (
 )
 
 func init() {
-    flag.StringVar(&hpweb, "hpweb", "127.0.0.1:3000", "nil")
-    flag.StringVar(&hpsta, "hpsta", "127.0.0.1:3100", "nil")
+    flag.StringVar(&hpweb, "hpweb", ":3000", "nil")
+    flag.StringVar(&hpsta, "hpsta", ":3100", "nil")
 }
 
 func main() {
