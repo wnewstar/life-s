@@ -1,30 +1,48 @@
 package main
 
 import (
-    "os"
     "fmt"
+    "flag"
     "net/http"
     _ "net/http/pprof"
     "life/router"
     "github.com/gin-gonic/gin"
 )
 
+var (
+    hpweb string
+    hpsta string
+)
+
+func init() {
+    flag.StringVar(&hpweb, "hpweb", "127.0.0.1:3000", "nil")
+    flag.StringVar(&hpsta, "hpsta", "127.0.0.1:3100", "nil")
+}
+
 func main() {
-    go status()
-    gin.SetMode(gin.ReleaseMode)
-    obj := gin.Default()
-    if len(os.Args) >= 2 {
-        (router.Route(obj)).Run(os.Args[1])
-        fmt.Printf("The HTTP service start at host port %s", os.Args[1])
+    flag.Parse()
+
+    if (len(hpweb) <= 0) {
+        fmt.Println("Please set host and port")
     } else {
-        (router.Route(obj)).Run("0.0.0.0:3000")
-        fmt.Printf("The HTTP service start at default host port 0.0.0.0:3000")
+        go httpstatus()
+
+        gin.DisableConsoleColor()
+        gin.SetMode(gin.ReleaseMode)
+
+        obj := gin.New()
+        obj.Use(gin.Recovery())
+
+        router.Route(obj).Run(hpweb)
+        fmt.Printf("The HTTP service start at host port %s", hpweb)
     }
 }
 
-func status() {
-    if len(os.Args) >= 3 {
-        http.ListenAndServe(os.Args[2], nil)
-        fmt.Printf("The HTTP status service start at host port %s", os.Args[2])
+func httpstatus() {
+    if (len(hpsta) > 0) {
+        http.ListenAndServe(hpsta, nil)
+        fmt.Printf("The HTTP status service start at host port %s", hpsta)
     }
 }
+
+
