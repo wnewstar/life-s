@@ -16,7 +16,7 @@ func main() {
     obj := gin.Default()
     if len(os.Args) >= 2 {
         (router.Route(obj)).Run(os.Args[1])
-        fmt.Println("The HTTP service start at host port %s", os.Args[1])
+        fmt.Printf("The HTTP service start at host port %s", os.Args[1])
     } else {
         (router.Route(obj)).Run("0.0.0.0:3000")
         fmt.Printf("The HTTP service start at default host port 0.0.0.0:3000")
@@ -25,7 +25,7 @@ func main() {
 
 func status() {
     if len(os.Args) >= 3 {
-        log.Println(http.ListenAndServe(os.Args[2], nil))
+        http.ListenAndServe(os.Args[2], nil)
         fmt.Printf("The HTTP status service start at host port %s", os.Args[2])
     }
 }
