@@ -8,14 +8,6 @@ import (
 
 type Bill struct {}
 
-func (*Bill) List(c *gin.Context) {
-    var Mbill ApiModel.Bill
-
-    base(c)
-    data := Mbill.FindSetByUid(uint(Uid))
-    c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_SELECT_SUCCESS_A, "note": TEXT_SELECT_SUCCESS_A, "data": data })
-}
-
 func (*Bill) Detail(c *gin.Context) {
     var Mbill ApiModel.Bill
     var Mbase ApiModel.Base
@@ -97,4 +89,16 @@ func (*Bill) Create(c *gin.Context) {
             c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_CREATE_FALIURE_A, "note": TEXT_CREATE_FALIURE_A, "data": data })
         }
     }
+}
+
+func (*Bill) getTag(c *gin.Context) {
+
+}
+
+func (*Bill) Search(c *gin.Context) {
+    var Mbill ApiModel.Bill
+
+    base(c)
+    data := Mbill.FindSetByUid(uint(Uid))
+    c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_SELECT_SUCCESS_A, "note": TEXT_SELECT_SUCCESS_A, "data": data })
 }

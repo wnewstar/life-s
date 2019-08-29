@@ -8,15 +8,6 @@ import (
 
 type Note struct {}
 
-func (*Note) List(c *gin.Context) {
-    var Mnote ApiModel.Note
-
-    base(c)
-    data := Mnote.FindSetByUid(uint(Uid))
-
-    c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_SELECT_SUCCESS_A, "note": TEXT_SELECT_SUCCESS_A, "data": data })
-}
-
 func (*Note) Detail(c *gin.Context) {
     var Mnote ApiModel.Note
     var Mbase ApiModel.Base
@@ -98,4 +89,17 @@ func (*Note) Create(c *gin.Context) {
             c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_CREATE_FALIURE_A, "note": TEXT_CREATE_FALIURE_A, "data": data })
         }
     }
+}
+
+func (*Note) getTag(c *gin.Context) {
+
+}
+
+func (*Note) Search(c *gin.Context) {
+    var Mnote ApiModel.Note
+
+    base(c)
+    data := Mnote.FindSetByUid(uint(Uid))
+
+    c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_SELECT_SUCCESS_A, "note": TEXT_SELECT_SUCCESS_A, "data": data })
 }
