@@ -13,11 +13,11 @@ func (*User) TableName() (string) {
 }
 
 func (*User) Create(muser User) (uint) {
-    Db.NewRecord(muser)
+    DbWrite.NewRecord(muser)
 
-    Db.Create(&muser)
+    DbWrite.Create(&muser)
 
-    Db.NewRecord(muser)
+    DbWrite.NewRecord(muser)
 
     return muser.Id
 }
@@ -25,7 +25,7 @@ func (*User) Create(muser User) (uint) {
 func (*User) FindAll() ([]User) {
     var Musers []User
 
-    Db.Where("status = 0").Find(&Musers)
+    DbQuery.Where("status = 0").Find(&Musers)
 
     return Musers
 }
@@ -34,7 +34,7 @@ func (*User) FindOneById(id uint) (User) {
     var Muser User
     var Where = &Base{ Id: id }
 
-    Db.Where(Where).Where("status = 0").First(&Muser)
+    DbQuery.Where(Where).Where("status = 0").First(&Muser)
 
     return Muser
 }
@@ -43,7 +43,7 @@ func (*User) FindOneByUsername(name string) (User) {
     var Muser User
     var Where = &User{ Username: name }
 
-    Db.Where(Where).Where("status = 0").First(&Muser)
+    DbQuery.Where(Where).Where("status = 0").First(&Muser)
 
     return Muser
 }
@@ -51,11 +51,11 @@ func (*User) FindOneByUsername(name string) (User) {
 func (*User) SaveOneById(muser User) (int64) {
     var Where = &Base{ Id: muser.Id }
 
-    return Db.Where(Where).Where("status = 0").Updates(muser).RowsAffected
+    return DbWrite.Where(Where).Where("status = 0").Updates(muser).RowsAffected
 }
 
 func (*User) SaveOneByUsername(muser User) (int64) {
     var Where = &User{ Username: muser.Username }
 
-    return Db.Model(User{}).Where(Where).Where("status = 0").Updates(muser).RowsAffected
+    return DbWrite.Model(User{}).Where(Where).Where("status = 0").Updates(muser).RowsAffected
 }

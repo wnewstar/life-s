@@ -4,15 +4,15 @@ import (
     "time"
     "golang.org/x/crypto/bcrypt"
     "github.com/gin-gonic/gin"
-    ApiModel "life/app/api/model"
-    ApiLogic "life/app/api/logic"
+    ModelFore "life/app/fore/model"
+    LogicFore "life/app/fore/logic"
 )
 
 type User struct {}
 
 func (*User) Login(c *gin.Context) {
-    var Luser ApiLogic.User
-    var Muser ApiModel.User
+    var Luser LogicFore.User
+    var Muser ModelFore.User
 
     if err := c.ShouldBindJSON(&Muser); err != nil {
         var data = err.Error()
@@ -29,7 +29,7 @@ func (*User) Login(c *gin.Context) {
 
 func (*User) Status(c *gin.Context) {
 
-    c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_SUCCESS_A, "note": TEXT_SUCCESS_A, "data": ApiModel.Musers })
+    c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_SUCCESS_A, "note": TEXT_SUCCESS_A, "data": ModelFore.Musers })
 }
 
 func (*User) Detail(c *gin.Context) {
@@ -45,7 +45,7 @@ func (*User) Delete(c *gin.Context) {
 }
 
 func (*User) Create(c *gin.Context) {
-    var Muser ApiModel.User
+    var Muser ModelFore.User
 
     if err := c.ShouldBindJSON(&Muser); err != nil {
         var data = err.Error()

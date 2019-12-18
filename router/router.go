@@ -1,26 +1,28 @@
 package router
 
 import (
-    "os"
     "github.com/gin-gonic/gin"
     Middleware "life/plugin/middle"
-    ApiController "life/app/api/controller"
+    ControllerFore "life/app/fore/controller"
 )
 
 func Route(r *gin.Engine) (*gin.Engine) {
-    base := os.Getenv("LIFE_FILE_UPLOAD_PATH")
-    r.Static("/static", base + "/static")
-
-    r.Use(gin.Recovery())
     r.Use(Middleware.Logger())
     r.Use(Middleware.CheckToken())
     r.Use(Middleware.CheckCrossDomain())
 
     groupApi := r.Group("/api")
     {
+        groupApiFile := groupApi.Group("/file")
+        {
+            controller := &ControllerFore.File{}
+
+            groupApiFile.POST("/upload", controller.UpLoad)
+        }
+
         groupApiUser := groupApi.Group("/user")
         {
-            controller := &ApiController.User{}
+            controller := &ControllerFore.User{}
 
             groupApiUser.POST("/login", controller.Login)
             groupApiUser.POST("/status", controller.Status)
@@ -30,16 +32,21 @@ func Route(r *gin.Engine) (*gin.Engine) {
             groupApiUser.POST("/delete", controller.Delete)
         }
 
-        groupApiFile := groupApi.Group("/file")
+        groupApiConf := groupApi.Group("/conf")
         {
-            controller := &ApiController.File{}
+            controller := &ControllerFore.Conf{}
 
-            groupApiFile.POST("/upload", controller.UpLoad)
+            groupApiConf.POST("/tree", controller.Tree)
+            groupApiConf.POST("/list", controller.List)
+            groupApiConf.POST("/create", controller.Create)
+            groupApiConf.POST("/detail", controller.Detail)
+            groupApiConf.POST("/modify", controller.Modify)
+            groupApiConf.POST("/delete", controller.Delete)
         }
 
         groupApiBill := groupApi.Group("/bill")
         {
-            controller := &ApiController.Bill{}
+            controller := &ControllerFore.Bill{}
 
             groupApiBill.POST("/search", controller.Search)
             groupApiBill.POST("/create", controller.Create)
@@ -50,13 +57,20 @@ func Route(r *gin.Engine) (*gin.Engine) {
 
         groupApiNote := groupApi.Group("/note")
         {
-            controller := &ApiController.Note{}
+            controller := &ControllerFore.Note{}
 
             groupApiNote.POST("/search", controller.Search)
             groupApiNote.POST("/create", controller.Create)
             groupApiNote.POST("/detail", controller.Detail)
             groupApiNote.POST("/modify", controller.Modify)
             groupApiNote.POST("/delete", controller.Delete)
+        }
+
+        groupApiZsystem := groupApi.Group("/system")
+        {
+            controller := &ControllerFore.Zsystem{}
+
+            groupApiZsystem.POST("/dbconninfo", controller.DbConnInfo)
         }
     }
 

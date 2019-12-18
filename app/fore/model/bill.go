@@ -17,11 +17,11 @@ func (*Bill) TableName() string {
 }
 
 func (*Bill) Create(mbill Bill) (uint) {
-    Db.NewRecord(mbill)
+    DbWrite.NewRecord(mbill)
 
-    Db.Create(&mbill)
+    DbWrite.Create(&mbill)
 
-    Db.NewRecord(mbill)
+    DbWrite.NewRecord(mbill)
 
     return mbill.Id
 }
@@ -30,7 +30,7 @@ func (*Bill) FindAll() ([]Bill) {
     var Mbills []Bill
     var Where = &Bill{}
 
-    Db.Where(Where).Where("`status` = 0").Order("date_time desc").Find(&Mbills)
+    DbQuery.Where(Where).Where("`status` = 0").Order("date_time desc").Find(&Mbills)
 
     return Mbills
 }
@@ -39,7 +39,7 @@ func (*Bill) FindSetByUid(uid uint) ([]Bill) {
     var Mbills []Bill
     var Where = &Bill{ Uid: uid }
 
-    Db.Where(Where).Where("`status` = 0").Order("date_time desc").Find(&Mbills)
+    DbQuery.Where(Where).Where("`status` = 0").Order("date_time desc").Find(&Mbills)
 
     return Mbills
 }
@@ -49,7 +49,7 @@ func (*Bill) FindOneByIdUid(mbill Bill) (Bill) {
     var Mbase = Base{ Id: mbill.Id }
     var Where = &Bill{ Base: Mbase, Uid: mbill.Uid }
 
-    Db.Where(Where).Where("`status` = 0").Order("date_time desc").First(&Mbill)
+    DbQuery.Where(Where).Where("`status` = 0").Order("date_time desc").First(&Mbill)
 
     return Mbill
 }
@@ -58,5 +58,5 @@ func (*Bill) SaveOneByIdUid(mbill Bill) (int64) {
     var Mbase = Base{ Id: mbill.Id }
     var Where = &Bill{ Base: Mbase, Uid: mbill.Uid }
 
-    return Db.Model(Bill{}).Where(Where).Where("`status` = 0").Updates(mbill).RowsAffected
+    return DbWrite.Model(Bill{}).Where(Where).Where("`status` = 0").Updates(mbill).RowsAffected
 }

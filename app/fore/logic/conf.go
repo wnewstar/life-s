@@ -3,18 +3,18 @@ package logic
 import (
     "strings"
     "strconv"
-    ApiModel "life/app/api/model"
+    ModelFore "life/app/fore/model"
 )
 
 type Conf struct {}
 
 type Tree struct {
     List                        map[uint]*Tree              `json:"list" binding:"required"`
-    Conf                        ApiModel.Conf               `json:"conf" binding:"required"`
+    Conf                        ModelFore.Conf               `json:"conf" binding:"required"`
 }
 
 func (*Conf) GetTree() (map[uint]*Tree) {
-    var Mconf ApiModel.Conf
+    var Mconf ModelFore.Conf
 
     var Trees = make(map[uint]*Tree)
     var Temps = make(map[uint]*Tree)
@@ -40,10 +40,10 @@ func (*Conf) GetTree() (map[uint]*Tree) {
     return Trees
 }
 
-func (*Conf) GetList() (map[uint]*ApiModel.Conf) {
-    var Mconf ApiModel.Conf
+func (*Conf) GetList() (map[uint]*ModelFore.Conf) {
+    var Mconf ModelFore.Conf
 
-    var Confs = make(map[uint]*ApiModel.Conf)
+    var Confs = make(map[uint]*ModelFore.Conf)
 
     temps := Mconf.FindAll()
 
@@ -57,7 +57,7 @@ func (*Conf) GetList() (map[uint]*ApiModel.Conf) {
 }
 
 func (*Conf) GetTreeByUid(uid uint) (map[uint]*Tree) {
-    var Mconf ApiModel.Conf
+    var Mconf ModelFore.Conf
 
     var Trees = make(map[uint]*Tree)
     var Temps = make(map[uint]*Tree)
@@ -83,10 +83,10 @@ func (*Conf) GetTreeByUid(uid uint) (map[uint]*Tree) {
     return Trees
 }
 
-func (*Conf) GetListByUid(uid uint) (map[uint]*ApiModel.Conf) {
-    var Mconf ApiModel.Conf
+func (*Conf) GetListByUid(uid uint) (map[uint]*ModelFore.Conf) {
+    var Mconf ModelFore.Conf
 
-    var Confs = make(map[uint]*ApiModel.Conf)
+    var Confs = make(map[uint]*ModelFore.Conf)
 
     temps := Mconf.FindSetByUid(uid)
 

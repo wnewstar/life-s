@@ -6,14 +6,14 @@ import (
     "strconv"
     "encoding/base64"
     "golang.org/x/crypto/bcrypt"
-    ApiModel "life/app/api/model"
+    ModelFore "life/app/fore/model"
 )
 
 type User struct {}
 
-func (*User) Login(user ApiModel.User) (back map[string]map[string]interface{}, err error) {
+func (*User) Login(user ModelFore.User) (back map[string]map[string]interface{}, err error) {
     var Time uint64
-    var Muser ApiModel.User
+    var Muser ModelFore.User
 
     err = errors.New("无效用户")
     Time = uint64(time.Now().Unix())
@@ -21,7 +21,7 @@ func (*User) Login(user ApiModel.User) (back map[string]map[string]interface{}, 
 
     if (Muser.Id > 0) {
         if err = bcrypt.CompareHashAndPassword([]byte(Muser.Password), []byte(user.Password)); err == nil {
-            ApiModel.Musers[Muser.Id] = Muser
+            ModelFore.Musers[Muser.Id] = Muser
             a := uint64(Muser.Id)
             b := Time + 7200
             back = make(map[string]map[string]interface{})

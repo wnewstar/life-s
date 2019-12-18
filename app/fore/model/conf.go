@@ -14,11 +14,11 @@ func (*Conf) TableName() (string) {
 }
 
 func (*Conf) Create(mconf Conf) (uint) {
-    Db.NewRecord(mconf)
+    DbWrite.NewRecord(mconf)
 
-    Db.Create(&mconf)
+    DbWrite.Create(&mconf)
 
-    Db.NewRecord(mconf)
+    DbWrite.NewRecord(mconf)
 
     return mconf.Id
 }
@@ -27,7 +27,7 @@ func (*Conf) FindAll() ([]Conf) {
     var Mconfs []Conf
     var Where = &Conf{}
 
-    Db.Where(Where).Where("`status` = 0").Order("path asc").Find(&Mconfs)
+    DbQuery.Where(Where).Where("`status` = 0").Order("path asc").Find(&Mconfs)
 
     return Mconfs
 }
@@ -36,7 +36,7 @@ func (*Conf) FindSetByUid(uid uint) ([]Conf) {
     var Mconfs []Conf
     var Where = &Conf{ Uid: uid }
 
-    Db.Where(Where).Where("`status` = 0").Order("path asc").Find(&Mconfs)
+    DbQuery.Where(Where).Where("`status` = 0").Order("path asc").Find(&Mconfs)
 
     return Mconfs
 }
@@ -46,7 +46,7 @@ func (*Conf) FindOneByIdUid(mconf Conf) (Conf) {
     var Mbase = Base{ Id: mconf.Id }
     var Where = &Conf{ Base: Mbase, Uid: mconf.Uid }
 
-    Db.Where(Where).Where("`status` = 0").Order("path desc").First(&Mconf)
+    DbQuery.Where(Where).Where("`status` = 0").Order("path desc").First(&Mconf)
 
     return Mconf
 }
@@ -55,5 +55,5 @@ func (*Conf) SaveOneByIdUid(mconf Conf) (int64) {
     var Mbase = Base{ Id: mconf.Id }
     var Where = &Conf{ Base: Mbase, Uid: mconf.Uid }
 
-    return Db.Model(Conf{}).Where(Where).Where("`status` = 0").Updates(mconf).RowsAffected
+    return DbWrite.Model(Conf{}).Where(Where).Where("`status` = 0").Updates(mconf).RowsAffected
 }

@@ -2,6 +2,8 @@ package model
 
 import (
     "os"
+    "fmt"
+    "life/conf"
     "github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/mysql"
 )
@@ -17,27 +19,46 @@ type Base struct {
     TimeUpdate                  uint64                      `json:"timeu"`
 }
 
-var Db *gorm.DB
+var Tm uint
+
+var DbQuery *gorm.DB
+var DbWrite *gorm.DB
+
 var Musers map[uint]User
 
 func init() {
-    Connect(true)
+    initDbMysql()
     Musers = make(map[uint]User)
 }
 
-func Close() {
-    Db.Close()
-}
-
-func Connect(real bool) {
+func initDbMysql() {
     var err error
 
-    if (real && Db != nil) {
-        Close()
-    }
-    if (real || Db == nil) {
-        Db, err = gorm.Open("mysql", os.Getenv("MYSQL_DSN_LIFE"))
+    DbQuery, err = gorm.Open("mysql", conf.MysqlQuery.Dsn)
 
-        if err == nil { Db.SingularTable(true) } else { panic("[ERROR] [MySQL] connect failed, check and repair it") }
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(-1)
     }
+    if conf.MysqlQuery.Env == "deve" {
+        DbQuery.LogMode(true)
+    }
+
+    DbQuery.SingularTable(true)
+    DbQuery.DB().SetMaxIdleConns(conf.MysqlQuery.MaxIdleConnNum)
+    DbQuery.DB().SetMaxOpenConns(conf.MysqlQuery.MaxOpenConnNum)
+
+    DbWrite, err = gorm.Open("mysql", conf.MysqlWrite.Dsn)
+
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(-1)
+    }
+    if conf.MysqlWrite.Env == "deve" {
+        DbWrite.LogMode(true)
+    }
+
+    DbWrite.SingularTable(true)
+    DbWrite.DB().SetMaxIdleConns(conf.MysqlWrite.MaxIdleConnNum)
+    DbWrite.DB().SetMaxOpenConns(conf.MysqlWrite.MaxOpenConnNum)
 }

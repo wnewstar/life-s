@@ -3,24 +3,41 @@ package controller
 import (
     "time"
     "github.com/gin-gonic/gin"
-    ApiModel "life/app/api/model"
+    ModelFore "life/app/fore/model"
+    LogicFore "life/app/fore/logic"
 )
 
-type Bill struct {}
+type Conf struct {}
 
-func (*Bill) Detail(c *gin.Context) {
-    var Mbill ApiModel.Bill
-    var Mbase ApiModel.Base
+func (*Conf) List(c *gin.Context) {
+    var Lconf LogicFore.Conf
+
+    base(c)
+    data := Lconf.GetListByUid(uint(Uid))
+    c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_SELECT_SUCCESS_A, "note": TEXT_SELECT_SUCCESS_A, "data": data })
+}
+
+func (*Conf) Tree(c *gin.Context) {
+    var Lconf LogicFore.Conf
+
+    base(c)
+    data := Lconf.GetTreeByUid(uint(Uid))
+    c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_SELECT_SUCCESS_A, "note": TEXT_SELECT_SUCCESS_A, "data": data })
+}
+
+func (*Conf) Detail(c *gin.Context) {
+    var Mconf ModelFore.Conf
+    var Mbase ModelFore.Base
 
     if err := c.ShouldBindJSON(&Mbase); err != nil {
         var data = err.Error()
         c.JSON(CODE_HTTP_FALIURE, gin.H{ "code": CODE_DETAIL_FALIURE_B, "note": TEXT_DETAIL_FALIURE_B, "data": data })
     } else {
         base(c)
-        Mbill.Id = Mbase.Id
-        Mbill.Uid = uint(Uid)
+        Mconf.Id = Mbase.Id
+        Mconf.Uid = uint(Uid)
 
-        if data := Mbill.FindOneByIdUid(Mbill); data.Base.Id > 0 {
+        if data := Mconf.FindOneByIdUid(Mconf); data.Id > 0 {
             c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_DETAIL_SUCCESS_A, "note": TEXT_DETAIL_SUCCESS_A, "data": data })
         } else {
             c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_DETAIL_FALIURE_A, "note": TEXT_DETAIL_FALIURE_A, "data": data })
@@ -28,19 +45,19 @@ func (*Bill) Detail(c *gin.Context) {
     }
 }
 
-func (*Bill) Modify(c *gin.Context) {
-    var Mbill ApiModel.Bill
+func (*Conf) Modify(c *gin.Context) {
+    var Mconf ModelFore.Conf
 
-    if err := c.ShouldBindJSON(&Mbill); err != nil {
+    if err := c.ShouldBindJSON(&Mconf); err != nil {
         var data = err.Error()
         c.JSON(CODE_HTTP_FALIURE, gin.H{ "code": CODE_MODIFY_FALIURE_B, "note": TEXT_MODIFY_FALIURE_B, "data": data })
     } else {
         base(c)
-        Mbill.Uid = uint(Uid)
-        Mbill.UserUpdate = uint(Uid)
-        Mbill.TimeUpdate = uint64(time.Now().Unix())
+        Mconf.Uid = uint(Uid)
+        Mconf.UserUpdate = uint(Uid)
+        Mconf.TimeUpdate = uint64(time.Now().Unix())
 
-        if data := Mbill.SaveOneByIdUid(Mbill); data > 0 {
+        if data := Mconf.SaveOneByIdUid(Mconf); data > 0 {
             c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_MODIFY_SUCCESS_A, "note": TEXT_MODIFY_SUCCESS_A, "data": data })
         } else {
             c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_MODIFY_FALIURE_A, "note": TEXT_MODIFY_FALIURE_A, "data": data })
@@ -48,22 +65,22 @@ func (*Bill) Modify(c *gin.Context) {
     }
 }
 
-func (*Bill) Delete(c *gin.Context) {
-    var Mbill ApiModel.Bill
-    var Mbase ApiModel.Base
+func (*Conf) Delete(c *gin.Context) {
+    var Mconf ModelFore.Conf
+    var Mbase ModelFore.Base
 
     if err := c.ShouldBindJSON(&Mbase); err != nil {
         var data = err.Error()
         c.JSON(CODE_HTTP_FALIURE, gin.H{ "code": CODE_DELETE_FALIURE_B, "note": TEXT_DELETE_FALIURE_B, "data": data })
     } else {
         base(c)
-        Mbill = ApiModel.Bill{ Base: ApiModel.Base{ Id: Mbase.Id } }
-        Mbill.Uid = uint(Uid)
-        Mbill.Status = 1
-        Mbill.UserDelete = uint(Uid)
-        Mbill.TimeDelete = uint64(time.Now().Unix())
+        Mconf = ModelFore.Conf{ Base: ModelFore.Base{ Id: Mbase.Id } }
+        Mconf.Uid = uint(Uid)
+        Mconf.Status = 1
+        Mconf.UserDelete = uint(Uid)
+        Mconf.TimeDelete = uint64(time.Now().Unix())
 
-        if data := Mbill.SaveOneByIdUid(Mbill); data > 0 {
+        if data := Mconf.SaveOneByIdUid(Mconf); data > 0 {
             c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_DELETE_SUCCESS_A, "note": TEXT_DELETE_SUCCESS_A, "data": data })
         } else {
             c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_DELETE_FALIURE_A, "note": TEXT_DELETE_FALIURE_A, "data": data })
@@ -71,34 +88,22 @@ func (*Bill) Delete(c *gin.Context) {
     }
 }
 
-func (*Bill) Create(c *gin.Context) {
-    var Mbill ApiModel.Bill
+func (*Conf) Create(c *gin.Context) {
+    var Mconf ModelFore.Conf
 
-    if err := c.ShouldBindJSON(&Mbill); err != nil {
+    if err := c.ShouldBindJSON(&Mconf); err != nil {
         var data = err.Error()
         c.JSON(CODE_HTTP_FALIURE, gin.H{ "code": CODE_CREATE_FALIURE_B, "note": TEXT_CREATE_FALIURE_B, "data": data })
     } else {
         base(c)
-        Mbill.Uid = uint(Uid)
-        Mbill.UserCreate = uint(Uid)
-        Mbill.TimeCreate = uint64(time.Now().Unix())
+        Mconf.Uid = uint(Uid)
+        Mconf.UserCreate = uint(Uid)
+        Mconf.TimeCreate = uint64(time.Now().Unix())
 
-        if data := Mbill.Create(Mbill); data > 0 {
+        if data := Mconf.Create(Mconf); data > 0 {
             c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_CREATE_SUCCESS_A, "note": TEXT_CREATE_SUCCESS_A, "data": data })
         } else {
             c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_CREATE_FALIURE_A, "note": TEXT_CREATE_FALIURE_A, "data": data })
         }
     }
-}
-
-func (*Bill) getTag(c *gin.Context) {
-
-}
-
-func (*Bill) Search(c *gin.Context) {
-    var Mbill ApiModel.Bill
-
-    base(c)
-    data := Mbill.FindSetByUid(uint(Uid))
-    c.JSON(CODE_HTTP_SUCCESS, gin.H{ "code": CODE_SELECT_SUCCESS_A, "note": TEXT_SELECT_SUCCESS_A, "data": data })
 }

@@ -13,48 +13,85 @@ import (
     "github.com/lestrrat-go/file-rotatelogs"
 )
 
-func Logger() (gin.HandlerFunc) {
-    log := logrus.New()
+var log = logrus.New()
 
-    h, _ := os.Hostname()
-    src, _ := os.OpenFile(os.DevNull, os.O_APPEND | os.O_WRONLY, os.ModeAppend)
+var host, _ = os.Hostname()
 
-    log.Out = src
+func init() {
     log.SetLevel(logrus.DebugLevel)
 
-    pacc := "/data/log/acc-" + h
+    pvisit := "/data/log/visit"
     writera, _ := rotatelogs.New(
-        pacc + ".%Y%m%d",
-        rotatelogs.WithLinkName(pacc),
+        pvisit + ".%Y%m%d",
+        rotatelogs.WithLinkName(pvisit),
         rotatelogs.WithMaxAge(99 * 24 * time.Hour),
         rotatelogs.WithRotationTime(24 * time.Hour),
     )
-    perr := "/data/log/err-" + h
+    pdebug := "/data/log/debug"
     writerb, _ := rotatelogs.New(
-        perr + ".%Y%m%d",
-        rotatelogs.WithLinkName(perr),
+        pdebug + ".%Y%m%d",
+        rotatelogs.WithLinkName(pdebug),
+        rotatelogs.WithMaxAge(99 * 24 * time.Hour),
+        rotatelogs.WithRotationTime(24 * time.Hour),
+    )
+    perror := "/data/log/error"
+    writerc, _ := rotatelogs.New(
+        perror + ".%Y%m%d",
+        rotatelogs.WithLinkName(perror),
         rotatelogs.WithMaxAge(99 * 24 * time.Hour),
         rotatelogs.WithRotationTime(24 * time.Hour),
     )
     writemap := lfshook.WriterMap{
-        logrus.InfoLevel: writera,
-        logrus.FatalLevel: writerb,
+        logrus.InfoLevel:  writera,
+        logrus.WarnLevel:  writerc,
+        logrus.DebugLevel: writerb,
+        logrus.ErrorLevel: writerc,
+        logrus.FatalLevel: writerc,
+        logrus.PanicLevel: writerc,
     }
     log.AddHook(lfshook.NewHook(writemap, &logrus.JSONFormatter{}))
+    log.Out, _ = os.OpenFile(os.DevNull, os.O_APPEND | os.O_WRONLY, os.ModeAppend)
+}
 
+/**
+ * @note        日志记录
+ * @date        2019-12-06
+ * @author      wnewstar
+ */
+func Logger() (gin.HandlerFunc) {
     return func (c *gin.Context) {
+        defer LogRecover(c)
+
         s := time.Now().UnixNano() / 1e6
-        c.Next()  
+        c.Next()
         e := time.Now().UnixNano() / 1e6
 
-        diff := e - s
+        t := e - s
+        url := c.Request.URL.Path
         method := c.Request.Method
         status := c.Writer.Status()
 
-        log.Infof("%s|%d|%v|%s|%s", method, status, diff, c.ClientIP(), c.Request.URL.Path)
+        log.Infof("%s|%s|%d|%v|%s|%s", host, method, status, t, c.ClientIP(), url)
     }
 }
 
+func LogRecover(c *gin.Context) {
+    if r := recover(); r != nil {
+        t := time.Now().UnixNano() / 1e6
+
+        url := c.Request.URL.Path
+        method := c.Request.Method
+        status := c.Writer.Status()
+
+        log.Panicf("%s|%s|%d|%v|%s|%s|%s", host, method, status, t, c.ClientIP(), url, r)
+    }
+}
+
+/**
+ * @desc        登录检查
+ * @date        2019-12-06
+ * @author      wnewstar
+ */
 func CheckToken() (gin.HandlerFunc) {
     return func(c *gin.Context) {
         if c.Request.Method != "OPTIONS" &&
@@ -84,6 +121,11 @@ func CheckToken() (gin.HandlerFunc) {
     }
 }
 
+/**
+ * @desc        跨域处理
+ * @date        2019-12-06
+ * @author      wnewstar
+ */
 func CheckCrossDomain() (gin.HandlerFunc) {
     return func(c *gin.Context) {
         if c.Request.Method == "OPTIONS" {

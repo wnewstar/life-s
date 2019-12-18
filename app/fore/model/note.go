@@ -16,11 +16,11 @@ func (*Note) TableName() string {
 }
 
 func (*Note) Create(mnote Note) (uint) {
-    Db.NewRecord(mnote)
+    DbWrite.NewRecord(mnote)
 
-    Db.Create(&mnote)
+    DbWrite.Create(&mnote)
 
-    Db.NewRecord(mnote)
+    DbWrite.NewRecord(mnote)
 
     return mnote.Id
 }
@@ -29,7 +29,7 @@ func (*Note) FindAll() ([]Note) {
     var Mnotes []Note
     var Where = &Note{}
 
-    Db.Where(Where).Where("`status` = 0").Order("date_time desc").Find(&Mnotes)
+    DbQuery.Where(Where).Where("`status` = 0").Order("date_time desc").Find(&Mnotes)
 
     return Mnotes
 }
@@ -38,7 +38,7 @@ func (*Note) FindSetByUid(uid uint) ([]Note) {
     var Mnotes []Note
     var Where = &Note{ Uid: uid }
 
-    Db.Where(Where).Where("`status` = 0").Order("date_time desc").Find(&Mnotes)
+    DbQuery.Where(Where).Where("`status` = 0").Order("date_time desc").Find(&Mnotes)
 
     return Mnotes
 }
@@ -48,7 +48,7 @@ func (*Note) FindOneByIdUid(mnote Note) (Note) {
     var Mbase = Base{ Id: mnote.Id }
     var Where = &Note{ Base: Mbase, Uid: mnote.Uid }
 
-    Db.Where(Where).Where("`status` = 0").Order("date_time desc").First(&Mnote)
+    DbQuery.Where(Where).Where("`status` = 0").Order("date_time desc").First(&Mnote)
 
     return Mnote
 }
@@ -57,5 +57,5 @@ func (*Note) SaveOneByIdUid(mnote Note) (int64) {
     var Mbase = Base{ Id: mnote.Id }
     var Where = &Note{ Base: Mbase, Uid: mnote.Uid }
 
-    return Db.Model(Note{}).Where(Where).Where("`status` = 0").Updates(mnote).RowsAffected
+    return DbWrite.Model(Note{}).Where(Where).Where("`status` = 0").Updates(mnote).RowsAffected
 }
